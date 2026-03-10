@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>www.isdying.com</title>
+<meta name="description" content="www.isdying.com">
+<meta name="theme-color" content="#030308">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --void: #030308;
+    --text: rgba(235,230,220,0.9);
+    --text-mid: rgba(235,230,220,0.55);
+    --text-dim: rgba(235,230,220,0.3);
+    --text-ghost: rgba(235,230,220,0.1);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.06) transparent;
+  }
+
+  body {
+    background: var(--void);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* ═══════════ FIXED SPACE BG ═══════════ */
+  #space {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .beams {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .beam {
+    position: absolute;
+    will-change: transform, opacity;
+  }
+
+  .beam:nth-child(1) {
+    left: 15%;
+    top: -20%;
+    height: 140%;
+    width: 120px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(120,80,255,0.04) 30%, rgba(120,80,255,0.06) 50%, rgba(120,80,255,0.03) 70%, transparent 100%);
+    filter: blur(25px);
+    transform: rotate(-8deg);
+    animation: bd1 25s ease-in-out infinite;
+  }
+
+  .beam:nth-child(2) {
+    right: 20%;
+    top: -10%;
+    height: 130%;
+    width: 80px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(80,120,255,0.03) 20%, rgba(80,120,255,0.05) 45%, rgba(80,120,255,0.02) 75%, transparent 100%);
+    filter: blur(25px);
+    transform: rotate(5deg);
+    animation: bd2 30s ease-in-out infinite;
+  }
+
+  .beam:nth-child(3) {
+    left: 45%;
+    top: -30%;
+    height: 160%;
+    width: 150px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(160,120,255,0.02) 25%, rgba(160,120,255,0.04) 50%, rgba(160,120,255,0.015) 80%, transparent 100%);
+    filter: blur(25px);
+    transform: rotate(-3deg);
+    animation: bd3 35s ease-in-out infinite;
+  }
+
+  .beam:nth-child(4) {
+    right: 40%;
+    top: -15%;
+    height: 140%;
+    width: 60px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(100,180,255,0.025) 35%, rgba(100,180,255,0.04) 55%, transparent 100%);
+    filter: blur(25px);
+    transform: rotate(12deg);
+    animation: bd4 22s ease-in-out infinite;
+  }
+
+  @keyframes bd1 {
+    0%, 100% { transform: rotate(-8deg) translateX(0); opacity: 0.7; }
+    50% { transform: rotate(-8deg) translateX(12px); opacity: 0.5; }
+  }
+  @keyframes bd2 {
+    0%, 100% { transform: rotate(5deg) translateX(0); opacity: 0.6; }
+    50% { transform: rotate(5deg) translateX(-10px); opacity: 0.8; }
+  }
+  @keyframes bd3 {
+    0%, 100% { transform: rotate(-3deg) translateX(0); opacity: 0.7; }
+    50% { transform: rotate(-3deg) translateX(8px); opacity: 0.5; }
+  }
+  @keyframes bd4 {
+    0%, 100% { transform: rotate(12deg) translateX(0); opacity: 0.5; }
+    50% { transform: rotate(12deg) translateX(-15px); opacity: 0.7; }
+  }
+
+  .nebula-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 50% 50% at 25% 50%, rgba(60,30,120,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 75% 40%, rgba(30,50,140,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(20,10,60,0.08) 0%, transparent 50%);
+  }
+
+  /* ═══════════ HEADER ═══════════ */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.45s ease, opacity 0.45s ease;
+    will-change: transform, opacity;
+  }
+
+  .header.hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: color 0.4s ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .nav-link:hover { color: var(--text); }
+
+  /* ═══════════ CONTENT ═══════════ */
+  .content {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* ═══════════ HERO ═══════════ */
+  .hero {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 550px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0 1.5rem;
+  }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 8vw, 5.5rem);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--text);
+    position: relative;
+    user-select: none;
+    animation: heroIn 1.4s ease-out both;
+    text-align: center;
+    text-shadow:
+      0 0 40px rgba(130,100,255,0.08),
+      0 0 80px rgba(130,100,255,0.04);
+  }
+
+  /* Dimensional echo layers — tesseract depth */
+  .hero-title::before,
+  .hero-title::after {
+    content: 'www.isdying.com';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+
+  .hero-title::before {
+    color: transparent;
+    -webkit-text-stroke: 0.5px rgba(130,100,255,0.12);
+    animation: echo1 10s ease-in-out infinite;
+  }
+
+  .hero-title::after {
+    color: transparent;
+    -webkit-text-stroke: 0.5px rgba(100,180,255,0.08);
+    animation: echo2 10s ease-in-out infinite;
+  }
+
+  /* Individual letter styling for font morphing */
+  .hero-title .t-char {
+    display: inline-block;
+    transition: font-family 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+    position: relative;
+  }
+
+  .hero-title .t-char.morph-serif {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    transform: translateY(-1px);
+  }
+
+  .hero-title .t-char.morph-mono {
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+    font-size: 0.85em;
+    transform: translateY(1px);
+  }
+
+  .hero-title .t-char.morph-dim {
+    opacity: 0.4;
+    filter: blur(0.8px);
+  }
+
+  @keyframes echo1 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0; }
+    15% { opacity: 0.6; transform: translate(-2px, -2px) scale(1.005); }
+    30% { opacity: 0; }
+    60% { opacity: 0.4; transform: translate(3px, 1px) scale(1.008); }
+    75% { opacity: 0; transform: translate(0, 0) scale(1); }
+  }
+
+  @keyframes echo2 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0; }
+    20% { opacity: 0; }
+    40% { opacity: 0.3; transform: translate(2px, 3px) scale(0.997); }
+    55% { opacity: 0; }
+    80% { opacity: 0.5; transform: translate(-3px, -1px) scale(1.003); }
+    90% { opacity: 0; transform: translate(0, 0) scale(1); }
+  }
+
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); filter: blur(10px); }
+    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: fadeIn 1s ease-out 1.5s both;
+    pointer-events: none;
+  }
+
+  .scroll-bar {
+    width: 1px;
+    height: 28px;
+    background: linear-gradient(to bottom, var(--text-ghost), transparent);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ═══════════ STATEMENT ═══════════ */
+  .statement {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 1.5rem;
+  }
+
+  .statement-inner {
+    max-width: 700px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .st-main {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.8rem, 5.5vw, 3.8rem);
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--text);
+  }
+
+  .ais {
+    color: rgba(210,45,45,0.9);
+  }
+
+  .ais-s {
+    color: var(--text);
+  }
+
+  .world-swap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .strike {
+    text-decoration: line-through;
+    text-decoration-color: rgba(235,230,220,0.35);
+    text-decoration-thickness: 2px;
+    opacity: 0.35;
+  }
+
+  .web-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1em;
+    font-style: italic;
+    color: var(--text);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  /* ─── Contact ─── */
+  .contact-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .contact-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: var(--text-mid);
+    padding: 0.85rem 2.2rem;
+    border: 1px solid rgba(130,100,255,0.2);
+    border-radius: 100px;
+    background: rgba(130,100,255,0.04);
+    cursor: pointer;
+    transition: all 0.5s ease;
+    text-transform: lowercase;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  .contact-btn:hover {
+    color: var(--text);
+    border-color: rgba(130,100,255,0.4);
+    background: rgba(130,100,255,0.08);
+    box-shadow: 0 0 30px rgba(130,100,255,0.08);
+  }
+
+  .contact-btn:focus-visible {
+    outline: 1px solid rgba(130,100,255,0.4);
+    outline-offset: 3px;
+  }
+
+  .contact-btn.dimmed {
+    opacity: 0.2;
+  }
+
+  .form-wrap {
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease 0.05s;
+  }
+
+  .form-wrap.open {
+    max-height: 420px;
+    opacity: 1;
+  }
+
+  .c-form {
+    padding-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cf input,
+  .cf textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .cf input::placeholder,
+  .cf textarea::placeholder {
+    color: rgba(235,230,220,0.12);
+  }
+
+  .cf input:focus,
+  .cf textarea:focus {
+    border-color: rgba(130,100,255,0.25);
+    box-shadow: 0 0 20px rgba(130,100,255,0.05);
+  }
+
+  .cf textarea {
+    resize: none;
+    min-height: 55px;
+    line-height: 1.5;
+  }
+
+  .cf-send {
+    align-self: flex-end;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    padding: 0.65rem 1.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-transform: lowercase;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .cf-send:hover {
+    border-color: rgba(130,100,255,0.3);
+    color: var(--text);
+  }
+
+  .cf-success {
+    display: none;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-align: center;
+    padding: 1.2rem 0;
+  }
+
+  .cf-success.show { display: block; }
+
+  /* ═══════════ FOOTER ═══════════ */
+  .site-footer {
+    position: relative;
+    z-index: 10;
+    padding: 2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .site-footer a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: color 0.4s ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .site-footer a:hover { color: var(--text); }
+
+  /* ═══════════ MOBILE ═══════════ */
+  @media (max-width: 600px) {
+    .header { padding: 1.2rem 1.2rem; }
+    .nav-link { font-size: 0.6rem; letter-spacing: 0.05em; }
+    .hero { padding: 0 1rem; }
+    .hero-title { font-size: clamp(2rem, 9vw, 3.2rem); }
+    .statement { padding: 4rem 1.2rem; }
+    .st-main { font-size: clamp(1.6rem, 6vw, 2.4rem); }
+    .contact-zone { max-width: 100%; }
+    .contact-btn { font-size: 0.65rem; padding: 0.75rem 1.8rem; }
+    .site-footer { padding: 2rem 1.2rem; }
+    .site-footer a { font-size: 0.6rem; }
+  }
+
+  /* Small height devices (landscape phones) */
+  @media (max-height: 500px) {
+    .hero { min-height: 400px; }
+    .scroll-cue { bottom: 1rem; }
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="space"></canvas>
+<div class="beams">
+  <div class="beam"></div>
+  <div class="beam"></div>
+  <div class="beam"></div>
+  <div class="beam"></div>
+</div>
+<div class="nebula-layer"></div>
+
+<nav class="header" id="header">
+  <a class="nav-link" id="headerEmail">www&#64;isdying.com</a>
+  <a href="https://x.com/wwwisdying" target="_blank" rel="noopener" class="nav-link">@wwwisdying</a>
+</nav>
+
+<div class="content">
+
+  <section class="hero">
+    <h1 class="hero-title" id="heroTitle" aria-label="www.isdying.com"></h1>
+    <div class="scroll-cue">
+      <div class="scroll-bar"></div>
+    </div>
+  </section>
+
+  <section class="statement">
+    <div class="statement-inner">
+
+      <h2 class="st-main">
+        <span class="ais">AI<span class="ais-s">s</span></span> are claiming<br>
+        the <span class="world-swap"><span class="strike">world</span><span class="web-over">web</span></span> humans built.
+      </h2>
+
+      <div class="contact-zone">
+        <div class="contact-btn" id="contactBtn" role="button" tabindex="0">join us</div>
+        <div class="form-wrap" id="formWrap">
+          <!--
+            Sostituisci YOUR_FORM_ID con il tuo Formspree endpoint.
+            formspree.io → New Form → copia l'ID dopo /f/
+          -->
+          <form class="c-form" id="cForm" action="https://formspree.io/f/mdaweeze" method="POST">
+            <div class="cf">
+              <input type="text" name="name" placeholder="name" autocomplete="name" required>
+            </div>
+            <div class="cf">
+              <input type="email" name="email" placeholder="email" autocomplete="email" required>
+            </div>
+            <div class="cf">
+              <textarea name="message" placeholder="share a brief thought" rows="2" maxlength="300"></textarea>
+            </div>
+            <button type="submit" class="cf-send">send</button>
+          </form>
+          <div class="cf-success" id="cfSuccess">received.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="https://x.com/wwwisdying" target="_blank" rel="noopener">@wwwisdying</a>
+    <a id="footerEmail">www&#64;isdying.com</a>
+  </footer>
+
+</div>
+
+<script>
+/* ═══════════ MAILTO SETUP ═══════════ */
+var em = 'www' + String.fromCharCode(64) + 'isdying.com';
+document.getElementById('headerEmail').href = 'mailto:' + em;
+document.getElementById('footerEmail').href = 'mailto:' + em;
+
+/* ═══════════ TITLE SETUP ═══════════ */
+var titleText = 'www.isdying.com';
+var ht = document.getElementById('heroTitle');
+var frag = document.createDocumentFragment();
+for (var i = 0; i < titleText.length; i++) {
+  var span = document.createElement('span');
+  span.className = 't-char';
+  span.textContent = titleText[i];
+  frag.appendChild(span);
+}
+ht.appendChild(frag);
+var chars = ht.querySelectorAll('.t-char');
+
+/* ═══════════ STARFIELD ═══════════ */
+var canvas = document.getElementById('space');
+var ctx = canvas.getContext('2d');
+var W, H, resizeTimer;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', function() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(resize, 150);
+});
+
+var N = Math.min(Math.floor((W * H) / 4500), 350);
+var sx = new Float32Array(N), sy = new Float32Array(N);
+var sr = new Float32Array(N), svx = new Float32Array(N);
+var svy = new Float32Array(N), sba = new Float32Array(N);
+var sph = new Float32Array(N), sps = new Float32Array(N);
+
+function initStar(idx, scatter) {
+  sx[idx] = Math.random() * W;
+  sy[idx] = scatter ? Math.random() * H : -2;
+  sr[idx] = Math.random() * 1.3 + 0.2;
+  svy[idx] = Math.random() * 0.08 + 0.015;
+  svx[idx] = (Math.random() - 0.5) * 0.03;
+  sba[idx] = Math.random() * 0.55 + 0.05;
+  sph[idx] = Math.random() * 6.28;
+  sps[idx] = Math.random() * 0.008 + 0.002;
+}
+for (var j = 0; j < N; j++) initStar(j, true);
+
+(function loop() {
+  ctx.clearRect(0, 0, W, H);
+  for (var k = 0; k < N; k++) {
+    sx[k] += svx[k]; sy[k] += svy[k]; sph[k] += sps[k];
+    var a = sba[k] * (0.5 + 0.5 * Math.sin(sph[k]));
+    if (sy[k] > H + 5 || sx[k] < -5 || sx[k] > W + 5) initStar(k, false);
+    ctx.beginPath();
+    ctx.arc(sx[k], sy[k], sr[k], 0, 6.28);
+    ctx.fillStyle = 'rgba(210,208,200,' + a + ')';
+    ctx.fill();
+  }
+  requestAnimationFrame(loop);
+})();
+
+/* ═══════════ HEADER HIDE ON SCROLL ═══════════ */
+var header = document.getElementById('header');
+var lastY = 0;
+var headerHidden = false;
+var ticking = false;
+
+window.addEventListener('scroll', function() {
+  if (!ticking) {
+    requestAnimationFrame(function() {
+      var y = window.scrollY;
+      if (y < 80) {
+        header.classList.remove('hidden');
+        headerHidden = false;
+      } else if (!headerHidden && y > lastY) {
+        header.classList.add('hidden');
+        headerHidden = true;
+      }
+      lastY = y;
+      ticking = false;
+    });
+    ticking = true;
+  }
+}, { passive: true });
+
+/* ═══════════ TESSERACT TITLE EFFECTS ═══════════ */
+var morphClasses = ['morph-serif', 'morph-mono', 'morph-dim'];
+
+function letterMorph() {
+  var count = Math.floor(Math.random() * 3) + 1;
+  for (var m = 0; m < count; m++) {
+    var idx = Math.floor(Math.random() * chars.length);
+    var cls = morphClasses[Math.floor(Math.random() * morphClasses.length)];
+    chars[idx].classList.add(cls);
+    (function(el, c) {
+      setTimeout(function() { el.classList.remove(c); }, 200 + Math.random() * 400);
+    })(chars[idx], cls);
+  }
+  setTimeout(letterMorph, 1500 + Math.random() * 3000);
+}
+setTimeout(letterMorph, 2500);
+
+function glitch() {
+  var dx = (Math.random() - 0.5) * 7;
+  var dy = (Math.random() - 0.5) * 5;
+  var sk = (Math.random() - 0.5) * 4;
+  ht.style.transition = 'none';
+  ht.style.transform = 'translate(' + dx + 'px,' + dy + 'px) skewX(' + sk + 'deg)';
+  ht.style.filter = 'hue-rotate(' + ((Math.random()-0.5)*30) + 'deg)';
+
+  setTimeout(function() {
+    ht.style.transition = 'transform 0.35s ease, filter 0.35s ease';
+    ht.style.transform = 'translate(0,0) skewX(0)';
+    ht.style.filter = 'none';
+  }, 70 + Math.random() * 80);
+
+  setTimeout(glitch, 4000 + Math.random() * 8000);
+}
+setTimeout(glitch, 3000);
+
+/* ═══════════ CONTACT FORM ═══════════ */
+var contactBtn = document.getElementById('contactBtn');
+var formWrap = document.getElementById('formWrap');
+var cForm = document.getElementById('cForm');
+var cfSuccess = document.getElementById('cfSuccess');
+
+function toggleForm() {
+  var isOpen = formWrap.classList.toggle('open');
+  contactBtn.classList.toggle('dimmed', isOpen);
+}
+
+contactBtn.addEventListener('click', toggleForm);
+contactBtn.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    toggleForm();
+  }
+});
+
+cForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = cForm.querySelector('.cf-send');
+  btn.textContent = '. . .';
+  btn.disabled = true;
+
+  fetch(cForm.action, {
+    method: 'POST',
+    body: new FormData(cForm),
+    headers: { 'Accept': 'application/json' }
+  }).then(function(res) {
+    if (res.ok) {
+      cForm.style.display = 'none';
+      cfSuccess.classList.add('show');
+    } else {
+      btn.textContent = 'retry';
+      btn.disabled = false;
+    }
+  }).catch(function() {
+    btn.textContent = 'retry';
+    btn.disabled = false;
+  });
+});
+</script>
+
+</body>
+</html>
